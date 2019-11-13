@@ -8,5 +8,5 @@ exports.Get = Ctrl.Get;
 exports.Put = Ctrl.Put;
 exports.Post = Ctrl.Post;
 exports.Delete = Ctrl.Delete;
-exports.Vdalitor = Vali.Validator;
+exports.Validator = Vali.Validator;
 //# sourceMappingURL=index.js.map
