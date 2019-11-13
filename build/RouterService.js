@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 require("reflect-metadata");
 const _ = require("lodash");
+const Validator_1 = require("./Validator");
 class RouterService {
     static createMappingDecorator(method) {
         return (path) => {
@@ -14,6 +15,10 @@ class RouterService {
                         let res = args[1];
                         let next = args[2];
                         try {
+                            let validator = Reflect.getMetadata(Validator_1.ValidatorService.getMetadataKey(key.toString()), target);
+                            if (validator) {
+                                yield Validator_1.ValidatorService.validate(validator, req);
+                            }
                             let result = yield original.apply(this, [req, res, next]);
                             switch (true) {
                                 case _.isString(result):

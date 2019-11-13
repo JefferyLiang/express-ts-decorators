@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Request, Response, NextFunction } from "express";
 import * as _ from "lodash";
+import { ValidatorService, ValidatorOption } from "./Validator";
 // 路由注解生成服务器类
 // router annonations builder service
 export class RouterService {
@@ -18,6 +19,15 @@ export class RouterService {
           let res: Response = args[1];
           let next: NextFunction = args[2];
           try {
+            // 校验
+            let validator: ValidatorOption = Reflect.getMetadata(
+              ValidatorService.getMetadataKey(key.toString()),
+              target
+            );
+            if (validator) {
+              await ValidatorService.validate(validator, req);
+            }
+            // 校验结束
             let result = await original.apply(this, [req, res, next]);
             switch (true) {
               case _.isString(result):

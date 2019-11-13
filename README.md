@@ -58,10 +58,16 @@ class App {
 
 const app = new App();
 
+// use the middlewares like that
+// app.use(bodyParser.json());
+
 // inject the loader routes config
 app.routes.forEach(router => {
   app.use(router);
 });
+
+// catch the error like that
+// app.use((err: IError, req: express.Request, res: express.Response, next: express.NextFunction) => { // do sth here });
 
 app.express.listen(3000);
 ```
@@ -76,4 +82,39 @@ app.express.listen(3000);
 
 ```bash
   ~ yarn test
+```
+
+## Validaotr
+
+you can use the Joi to validate your http request parameter
+
+```typescript
+// ./controllers/hello.ts
+import { Controller, Get, Validator } from "express-ts-descorator";
+import * as Joi from "@hapi/joi";
+
+// support the `query`, `body`, `params` validator in http request.
+@Validator({
+  query: Joi.object()
+    .keys({
+      name: Joi.string().required() // will throw error when request.query.name not exist or not the string
+    })
+    .requried()
+  // body: .....
+  // params: .....
+})
+@Controller("/api/hello")
+export class Hello {
+  @Get("")
+  public hello() {
+    return "hello";
+  }
+
+  @Get("/json")
+  public jsonHello() {
+    return {
+      message: "hello"
+    };
+  }
+}
 ```

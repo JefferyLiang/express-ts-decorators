@@ -4,7 +4,8 @@ import * as Path from "path";
 import { RequestHandler } from "express-serve-static-core";
 
 @ControllerLoader({
-  filePath: Path.join(__dirname, "./controllers")
+  filePath: Path.join(__dirname, "./controllers"),
+  validator: true
 })
 class App {
   private _express: express.Express;
@@ -28,5 +29,11 @@ const app = new App();
 app.routes.forEach(router => {
   app.use(router);
 });
+
+app.use((err, req, res, next) => {
+  res.json(err);
+});
+
+app.express.listen(3000);
 
 export default app.express;

@@ -1,5 +1,13 @@
+import Joi = require("@hapi/joi");
+
 type ControllerLoaderOption = {
   filePath: string;
+};
+
+type ValidatorOption = {
+  query?: Joi.Schema;
+  body?: Joi.Schema;
+  params?: Joi.Schema;
 };
 
 declare namespace expressTsDecorator {
@@ -9,6 +17,7 @@ declare namespace expressTsDecorator {
   export function Put(path: string): MethodDecorator;
   export function Delete(path: string): MethodDecorator;
   export function Post(path: string): MethodDecorator;
+  export function Validator(option: ValidatorOption): MethodDecorator;
 }
 
 export = expressTsDecorator;

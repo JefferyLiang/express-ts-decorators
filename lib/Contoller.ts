@@ -25,6 +25,7 @@ type RouterConfigOption = {
 
 type ControllerLoaderOption = {
   filePath: string;
+  validator?: boolean;
 };
 
 // 服务器注入装饰器
@@ -35,6 +36,7 @@ export function ControllerLoader(option: ControllerLoaderOption) {
 
       constructor(...args: any[]) {
         super(...args);
+        // 注入路由
         this.routes = [];
         if (option.filePath) {
           if (!fs.existsSync(option.filePath)) {
@@ -55,7 +57,7 @@ export function ControllerLoader(option: ControllerLoaderOption) {
 }
 
 // 控制器注入服务类
-class ControllerLoaderService {
+export class ControllerLoaderService {
   // 允许注入的路由类型
   private static CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
 

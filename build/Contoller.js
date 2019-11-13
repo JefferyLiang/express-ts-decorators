@@ -89,5 +89,6 @@ class ControllerLoaderService {
         return routes;
     }
 }
+exports.ControllerLoaderService = ControllerLoaderService;
 ControllerLoaderService.CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
 //# sourceMappingURL=Contoller.js.map
