@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "strict": true,
+    "baseUrl": "./",
+    "outDir": "build",
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "sourceMap": true,
+    "declaration": false,
+    "types": ["node", "mocha"],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2015.promise"]
+  },
+  "include": ["./lib/*.ts"],
+  "exclude": ["./src/node_modules"]
+}
