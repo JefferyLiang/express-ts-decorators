@@ -1,11 +1,10 @@
 {
-  "name": "express-ts-decorators",
-  "version": "0.0.1",
+  "name": "express-ts-decorator",
+  "version": "0.1.0",
   "description": "Express typescript descorators",
   "main": "build/Controller.js",
   "author": "JefferyLiang",
   "license": "MIT",
-  "private": false,
   "scripts": {
     "test": "npx mocha -r ts-node/register test/index.ts --exit",
     "build": "rm -rf ./build && npx typescript"
@@ -28,6 +27,12 @@
     "mocha": "^6.2.2",
     "ts-node": "^8.5.0"
   },
+  "files": [
+    "build/",
+    "lib/",
+    "README.md",
+    "index.d.ts"
+  ],
   "bin": {
     "ts-node": "node_modules/.bin/ts-node"
   }
