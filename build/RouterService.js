@@ -16,6 +16,10 @@ class RouterService {
                         let res = args[1];
                         let next = args[2];
                         try {
+                            for (let key in req.query) {
+                                let item = req.query[key];
+                                req.query[key] = JSON.parse(item) || item;
+                            }
                             let validator = Reflect.getMetadata(Validator_1.ValidatorService.getMetadataKey(key.toString()), target);
                             if (validator) {
                                 yield Validator_1.ValidatorService.validate(validator, req);

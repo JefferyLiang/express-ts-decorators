@@ -20,6 +20,11 @@ export class RouterService {
           let res: Response = args[1];
           let next: NextFunction = args[2];
           try {
+            // 请求体 req.query 对象字符串格式化
+            for (let key in req.query) {
+              let item = req.query[key];
+              req.query[key] = JSON.parse(item) || item;
+            }
             // 校验
             let validator: ValidatorOption = Reflect.getMetadata(
               ValidatorService.getMetadataKey(key.toString()),
