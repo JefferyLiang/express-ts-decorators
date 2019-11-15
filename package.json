@@ -29,6 +29,10 @@
     "tslib": "^1.10.0",
     "typescript": "^3.7.2"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JefferyLiang/express-ts-decorators"
+  },
   "files": [
     "build/",
     "lib/",
