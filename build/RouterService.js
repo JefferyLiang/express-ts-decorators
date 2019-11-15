@@ -5,6 +5,7 @@ require("reflect-metadata");
 const _ = require("lodash");
 const Validator_1 = require("./Validator");
 const Contoller_1 = require("./Contoller");
+const lodash_1 = require("lodash");
 class RouterService {
     static createMappingDecorator(method) {
         return (path) => {
@@ -18,7 +19,9 @@ class RouterService {
                         try {
                             for (let key in req.query) {
                                 let item = req.query[key];
-                                req.query[key] = JSON.parse(item) || item;
+                                if (lodash_1.isString(item)) {
+                                    req.query[key] = JSON.parse(item) || item;
+                                }
                             }
                             let validator = Reflect.getMetadata(Validator_1.ValidatorService.getMetadataKey(key.toString()), target);
                             if (validator) {
