@@ -3,6 +3,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import * as _ from "lodash";
 import { ValidatorService, ValidatorOption } from "./Validator";
 import { ControllerLoaderService } from "./Contoller";
+import { isString } from "lodash";
 // 路由注解生成服务器类
 // router annonations builder service
 export class RouterService {
@@ -23,7 +24,9 @@ export class RouterService {
             // 请求体 req.query 对象字符串格式化
             for (let key in req.query) {
               let item = req.query[key];
-              req.query[key] = JSON.parse(item) || item;
+              if (isString(item)) {
+                req.query[key] = JSON.parse(item) || item;
+              }
             }
             // 校验
             let validator: ValidatorOption = Reflect.getMetadata(
