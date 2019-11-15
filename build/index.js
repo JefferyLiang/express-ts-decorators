@@ -4,6 +4,7 @@ const Ctrl = require("./Contoller");
 const Vali = require("./Validator");
 exports.Controller = Ctrl.Controller;
 exports.ControllerLoader = Ctrl.ControllerLoader;
+exports.Middlewares = Ctrl.Middlewares;
 exports.Get = Ctrl.Get;
 exports.Put = Ctrl.Put;
 exports.Post = Ctrl.Post;

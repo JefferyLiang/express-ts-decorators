@@ -4,6 +4,7 @@ const tslib_1 = require("tslib");
 require("reflect-metadata");
 const _ = require("lodash");
 const Validator_1 = require("./Validator");
+const Contoller_1 = require("./Contoller");
 class RouterService {
     static createMappingDecorator(method) {
         return (path) => {
@@ -18,6 +19,12 @@ class RouterService {
                             let validator = Reflect.getMetadata(Validator_1.ValidatorService.getMetadataKey(key.toString()), target);
                             if (validator) {
                                 yield Validator_1.ValidatorService.validate(validator, req);
+                            }
+                            let middlewares = Reflect.getMetadata(`${Contoller_1.ControllerLoaderService.MIDDLEWARES_KEY.toString()}_${key.toString()}`, target);
+                            if (middlewares && middlewares.length > 0) {
+                                for (let middleware of middlewares) {
+                                    yield middleware.apply(this, [req, res, next]);
+                                }
                             }
                             let result = yield original.apply(this, [req, res, next]);
                             switch (true) {

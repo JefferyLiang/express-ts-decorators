@@ -1,7 +1,8 @@
 import "reflect-metadata";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import * as _ from "lodash";
 import { ValidatorService, ValidatorOption } from "./Validator";
+import { ControllerLoaderService } from "./Contoller";
 // 路由注解生成服务器类
 // router annonations builder service
 export class RouterService {
@@ -28,6 +29,17 @@ export class RouterService {
               await ValidatorService.validate(validator, req);
             }
             // 校验结束
+            // 路由中间件
+            let middlewares: RequestHandler[] = Reflect.getMetadata(
+              `${ControllerLoaderService.MIDDLEWARES_KEY.toString()}_${key.toString()}`,
+              target
+            );
+            if (middlewares && middlewares.length > 0) {
+              for (let middleware of middlewares) {
+                await middleware.apply(this, [req, res, next]);
+              }
+            }
+            // 路由中间件结束
             let result = await original.apply(this, [req, res, next]);
             switch (true) {
               case _.isString(result):

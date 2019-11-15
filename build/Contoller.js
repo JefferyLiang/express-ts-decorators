@@ -10,6 +10,12 @@ function Controller(path) {
     };
 }
 exports.Controller = Controller;
+function Middlewares(...middlewares) {
+    return (target, key, descriptor) => {
+        Reflect.defineMetadata(`${ControllerLoaderService.MIDDLEWARES_KEY.toString()}_${key.toString()}`, middlewares, target);
+    };
+}
+exports.Middlewares = Middlewares;
 exports.Get = RouterService_1.RouterService.createMappingDecorator("GET");
 exports.Post = RouterService_1.RouterService.createMappingDecorator("POST");
 exports.Delete = RouterService_1.RouterService.createMappingDecorator("DELETE");
@@ -91,4 +97,5 @@ class ControllerLoaderService {
 }
 exports.ControllerLoaderService = ControllerLoaderService;
 ControllerLoaderService.CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
+ControllerLoaderService.MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
 //# sourceMappingURL=Contoller.js.map

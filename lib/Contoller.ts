@@ -1,12 +1,23 @@
 import "reflect-metadata";
 import { RouterService } from "./RouterService";
-import { Router } from "express";
+import { Router, RequestHandler } from "express";
 import * as fs from "fs";
 
 // 控制器装饰器
 export function Controller(path: string): ClassDecorator {
   return target => {
     Reflect.defineMetadata(RouterService.PREFIX_METADATA, path, target);
+  };
+}
+
+// 中间件装饰器
+export function Middlewares(...middlewares: RequestHandler[]): MethodDecorator {
+  return (target, key, descriptor) => {
+    Reflect.defineMetadata(
+      `${ControllerLoaderService.MIDDLEWARES_KEY.toString()}_${key.toString()}`,
+      middlewares,
+      target
+    );
   };
 }
 
@@ -60,6 +71,7 @@ export function ControllerLoader(option: ControllerLoaderOption) {
 export class ControllerLoaderService {
   // 允许注入的路由类型
   private static CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
+  public static MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
 
   // 根据文件夹路径获取控制器
   public static getControllersWithFilePath(path: string) {

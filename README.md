@@ -1,6 +1,15 @@
-# express-ts-descorator
+# express-ts-decorator
 
 > The Express typescript easy to use decorator project
+
+## Install
+
+```bash
+  # use npm
+  ~ npm i express-ts-decorator
+  # use yarn
+  ~ yarn add express-ts-decorator
+```
 
 ## Usage
 
@@ -84,7 +93,7 @@ app.express.listen(3000);
   ~ yarn test
 ```
 
-## Validaotr
+## Validator
 
 you can use the Joi to validate your http request parameter
 
@@ -105,6 +114,41 @@ import * as Joi from "@hapi/joi";
 })
 @Controller("/api/hello")
 export class Hello {
+  @Get("")
+  public hello() {
+    return "hello";
+  }
+
+  @Get("/json")
+  public jsonHello() {
+    return {
+      message: "hello"
+    };
+  }
+}
+```
+
+## Middlewares
+
+```typescript
+import { Controller, Get, Middlewares, Validator } from "express-ts-decorator";
+import * as Joi from "@hapi/joi";
+import { Request, Response, NextFunction } from "express";
+
+@Controller("/api/hello")
+export class Hello {
+  @Validator({
+    query: Joi.object()
+      .keys({
+        name: Joi.string().required()
+      })
+      .required()
+  })
+  @Middlewares(function(req: Request, res: Response, next: NextFunction) {
+    console.log("in");
+    // You can do something in here before call the controller main function
+    next();
+  })
   @Get("")
   public hello() {
     return "hello";

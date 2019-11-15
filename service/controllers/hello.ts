@@ -1,6 +1,7 @@
-import { Controller, Get } from "../../lib/Contoller";
+import { Controller, Get, Middlewares } from "../../lib/Contoller";
 import { Validator } from "../../lib/Validator";
 import * as Joi from "@hapi/joi";
+import { Request, Response, NextFunction } from "express";
 
 @Controller("/api/hello")
 export class Hello {
@@ -10,6 +11,10 @@ export class Hello {
         name: Joi.string().required()
       })
       .required()
+  })
+  @Middlewares(function(req: Request, res: Response, next: NextFunction) {
+    console.log("in");
+    next();
   })
   @Get("")
   public hello() {

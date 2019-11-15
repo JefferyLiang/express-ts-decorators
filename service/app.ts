@@ -34,6 +34,6 @@ app.use((err, req, res, next) => {
   res.json(err);
 });
 
-app.express.listen(3000);
+// app.express.listen(3000);
 
 export default app.express;

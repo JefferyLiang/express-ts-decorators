@@ -1,4 +1,5 @@
 import Joi = require("@hapi/joi");
+import { RequestHandler } from "express";
 
 type ControllerLoaderOption = {
   filePath: string;
@@ -18,6 +19,7 @@ declare namespace expressTsDecorator {
   export function Delete(path: string): MethodDecorator;
   export function Post(path: string): MethodDecorator;
   export function Validator(option: ValidatorOption): MethodDecorator;
+  export function Middlewares(...middlewares: RequestHandler[]);
 }
 
 export = expressTsDecorator;
