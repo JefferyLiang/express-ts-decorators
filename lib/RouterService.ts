@@ -2,8 +2,9 @@ import "reflect-metadata";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import * as _ from "lodash";
 import { ValidatorService, ValidatorOption } from "./Validator";
-import { ControllerLoaderService } from "./Contoller";
+import { ControllerLoaderService } from "./Controller";
 import { isString } from "lodash";
+import { Stream } from "stream";
 // 路由注解生成服务器类
 // router annonations builder service
 export class RouterService {
@@ -52,6 +53,9 @@ export class RouterService {
             switch (true) {
               case _.isString(result):
                 res.end(result);
+                break;
+              case result instanceof Stream:
+                result.pipe(res);
                 break;
               case _.isObject(result):
                 res.json(result);

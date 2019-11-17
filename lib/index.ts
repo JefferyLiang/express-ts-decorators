@@ -1,4 +1,4 @@
-import * as Ctrl from "./Contoller";
+import * as Ctrl from "./Controller";
 import * as Vali from "./Validator";
 
 export const Controller = Ctrl.Controller;
