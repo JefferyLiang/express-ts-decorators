@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Ctrl = require("./Contoller");
+const Ctrl = require("./Controller");
 const Vali = require("./Validator");
 exports.Controller = Ctrl.Controller;
 exports.ControllerLoader = Ctrl.ControllerLoader;

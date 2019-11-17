@@ -98,4 +98,4 @@ class ControllerLoaderService {
 exports.ControllerLoaderService = ControllerLoaderService;
 ControllerLoaderService.CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
 ControllerLoaderService.MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
-//# sourceMappingURL=Contoller.js.map
+//# sourceMappingURL=Controller.js.map

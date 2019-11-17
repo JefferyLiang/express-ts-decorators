@@ -1,5 +1,5 @@
 import * as express from "express";
-import { ControllerLoader } from "../lib/Contoller";
+import { ControllerLoader } from "../lib/Controller";
 import * as Path from "path";
 import { RequestHandler } from "express-serve-static-core";
 

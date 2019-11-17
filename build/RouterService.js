@@ -4,8 +4,9 @@ const tslib_1 = require("tslib");
 require("reflect-metadata");
 const _ = require("lodash");
 const Validator_1 = require("./Validator");
-const Contoller_1 = require("./Contoller");
+const Controller_1 = require("./Controller");
 const lodash_1 = require("lodash");
+const stream_1 = require("stream");
 class RouterService {
     static createMappingDecorator(method) {
         return (path) => {
@@ -19,7 +20,9 @@ class RouterService {
                         try {
                             for (let key in req.query) {
                                 let item = req.query[key];
-                                if (lodash_1.isString(item)) {
+                                if (lodash_1.isString(item) &&
+                                    ((item.startsWith("{") && item.endsWith("}")) ||
+                                        (item.startsWith("[") && item.endsWith("]")))) {
                                     req.query[key] = JSON.parse(item) || item;
                                 }
                             }
@@ -27,7 +30,7 @@ class RouterService {
                             if (validator) {
                                 yield Validator_1.ValidatorService.validate(validator, req);
                             }
-                            let middlewares = Reflect.getMetadata(`${Contoller_1.ControllerLoaderService.MIDDLEWARES_KEY.toString()}_${key.toString()}`, target);
+                            let middlewares = Reflect.getMetadata(`${Controller_1.ControllerLoaderService.MIDDLEWARES_KEY.toString()}_${key.toString()}`, target);
                             if (middlewares && middlewares.length > 0) {
                                 for (let middleware of middlewares) {
                                     yield middleware.apply(this, [req, res, next]);
@@ -38,6 +41,9 @@ class RouterService {
                                 case _.isString(result):
                                     res.end(result);
                                     break;
+                                case result instanceof stream_1.Stream:
+                                    result.pipe(res);
+                                    break;
                                 case _.isObject(result):
                                     res.json(result);
                                     break;
@@ -46,6 +52,7 @@ class RouterService {
                             }
                         }
                         catch (err) {
+                            console.error(err);
                             return next(err);
                         }
                     });

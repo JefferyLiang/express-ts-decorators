@@ -1,4 +1,4 @@
-import { Controller, Get, Middlewares } from "../../lib/Contoller";
+import { Controller, Get, Middlewares } from "../../lib/Controller";
 import { Validator } from "../../lib/Validator";
 import * as Joi from "@hapi/joi";
 import { Request, Response, NextFunction } from "express";
@@ -12,9 +12,8 @@ export class Hello {
       })
       .required()
   })
-  @Middlewares(function(req: Request, res: Response, next: NextFunction) {
+  @Middlewares(function() {
     console.log("in");
-    next();
   })
   @Get("")
   public hello() {

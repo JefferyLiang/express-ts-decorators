@@ -9,7 +9,9 @@ describe("Demo", () => {
 
   context("hello", () => {
     it("should return hello string", async () => {
-      let result = await axios.get("http://localhost:3000/api/hello?name=123");
+      let result = await axios.get(
+        "http://localhost:3000/api/hello?name=hello123"
+      );
       expect(result.data).to.equal("hello");
     });
     it("should return hello json", async () => {

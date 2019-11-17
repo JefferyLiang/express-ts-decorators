@@ -25,7 +25,11 @@ export class RouterService {
             // 请求体 req.query 对象字符串格式化
             for (let key in req.query) {
               let item = req.query[key];
-              if (isString(item)) {
+              if (
+                isString(item) &&
+                ((item.startsWith("{") && item.endsWith("}")) ||
+                  (item.startsWith("[") && item.endsWith("]")))
+              ) {
                 req.query[key] = JSON.parse(item) || item;
               }
             }
@@ -64,6 +68,7 @@ export class RouterService {
                 res.end(result);
             }
           } catch (err) {
+            console.error(err);
             return next(err);
           }
         };
