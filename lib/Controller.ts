@@ -35,6 +35,7 @@ type RouterConfigOption = {
 };
 
 type ControllerLoaderOption = {
+  debug?: boolean;
   filePath: string;
   validator?: boolean;
 };
@@ -49,6 +50,7 @@ export function ControllerLoader(option: ControllerLoaderOption) {
         super(...args);
         // 注入路由
         this.routes = [];
+        ControllerLoaderService.debug = option.debug || false;
         if (option.filePath) {
           if (!fs.existsSync(option.filePath)) {
             throw new Error(
@@ -69,12 +71,22 @@ export function ControllerLoader(option: ControllerLoaderOption) {
 
 // 控制器注入服务类
 export class ControllerLoaderService {
+  public static debug: boolean = false;
   // 允许注入的路由类型
   private static CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
   public static MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
 
+  public static log(msg: string) {
+    if (this.debug) {
+      console.log(
+        `[Express-ts-decorator] ${new Date().toLocaleString()} : ${msg}`
+      );
+    }
+  }
+
   // 根据文件夹路径获取控制器
   public static getControllersWithFilePath(path: string) {
+    this.log("Find controller now...");
     let contorllerList: any[] = [];
     const files = fs
       .readdirSync(path)
@@ -97,6 +109,7 @@ export class ControllerLoaderService {
   private static routerBuilder(
     config: Array<RouterConfigOption | undefined>
   ): Router {
+    this.log("Buildding router ...");
     let router: any = Router();
     config
       .filter(val => val !== undefined)
@@ -109,6 +122,7 @@ export class ControllerLoaderService {
 
   public static getRoutes(controllers: any[]): Array<Router> {
     let routes: Router[] = [];
+    this.log("Mapping Controller ...");
     for (let _controller of controllers) {
       let controller = new _controller();
       // 获取参数

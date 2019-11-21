@@ -26,6 +26,7 @@ function ControllerLoader(option) {
             constructor(...args) {
                 super(...args);
                 this.routes = [];
+                ControllerLoaderService.debug = option.debug || false;
                 if (option.filePath) {
                     if (!fs.existsSync(option.filePath)) {
                         throw new Error(`controllers path for ${option.filePath} not exist`);
@@ -39,7 +40,13 @@ function ControllerLoader(option) {
 }
 exports.ControllerLoader = ControllerLoader;
 class ControllerLoaderService {
+    static log(msg) {
+        if (this.debug) {
+            console.log(`[Express-ts-decorator] ${new Date().toLocaleString()} : ${msg}`);
+        }
+    }
     static getControllersWithFilePath(path) {
+        this.log("Find controller now...");
         let contorllerList = [];
         const files = fs
             .readdirSync(path)
@@ -57,6 +64,7 @@ class ControllerLoaderService {
         return contorllerList;
     }
     static routerBuilder(config) {
+        this.log("Buildding router ...");
         let router = express_1.Router();
         config
             .filter(val => val !== undefined)
@@ -68,6 +76,7 @@ class ControllerLoaderService {
     }
     static getRoutes(controllers) {
         let routes = [];
+        this.log("Mapping Controller ...");
         for (let _controller of controllers) {
             let controller = new _controller();
             const prototype = Object.getPrototypeOf(controller);
@@ -96,6 +105,7 @@ class ControllerLoaderService {
     }
 }
 exports.ControllerLoaderService = ControllerLoaderService;
+ControllerLoaderService.debug = false;
 ControllerLoaderService.CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
 ControllerLoaderService.MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
 //# sourceMappingURL=Controller.js.map

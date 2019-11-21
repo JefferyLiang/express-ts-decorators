@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 
 type ControllerLoaderOption = {
   filePath: string;
+  debug?: boolean;
 };
 
 type ValidatorOption = {
