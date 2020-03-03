@@ -130,7 +130,19 @@ class ControllerLoaderService {
     static injectMiddlewaresBeforeRouterInject(express, middlewares) {
         this.log("Inject before router middlewares");
         for (let item of middlewares) {
-            express.use(item);
+            if (item instanceof Function) {
+                express.use(item);
+            }
+            else if (item instanceof Object) {
+                let KEYS = Object.keys(item);
+                if (KEYS.find(val => val === "active") &&
+                    KEYS.find(val => val === "middleware")) {
+                    let isActive = item.active instanceof Function ? item.active() : item.active;
+                    if (isActive) {
+                        express.use(item.middleware);
+                    }
+                }
+            }
         }
     }
 }

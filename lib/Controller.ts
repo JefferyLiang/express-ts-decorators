@@ -210,20 +210,41 @@ export class ControllerLoaderService {
 
   public static injectMiddlewaresBeforeRouterInject(
     express: Express,
-    middlewares: Array<RequestHandler>
+    middlewares: Array<RequestHandler | BeforeRouterInjectMiddleware>
   ) {
     this.log("Inject before router middlewares");
     for (let item of middlewares) {
-      express.use(item);
+      if (item instanceof Function) {
+        express.use(item);
+      } else if (item instanceof Object) {
+        let KEYS = Object.keys(item);
+        if (
+          KEYS.find(val => val === "active") &&
+          KEYS.find(val => val === "middleware")
+        ) {
+          let isActive =
+            item.active instanceof Function ? item.active() : item.active;
+          if (isActive) {
+            express.use(item.middleware);
+          }
+        }
+      }
     }
   }
 }
+
+type BeforeRouterInjectMiddleware = {
+  active: Boolean | Function;
+  middleware: RequestHandler;
+};
 
 // 控制器注入描述类
 export class ExpressApp {
   private _express: Express;
   public routes: Router[] = [];
-  public beforeRouterInjectMiddlewares: Array<RequestHandler> = [];
+  public beforeRouterInjectMiddlewares: Array<
+    RequestHandler | BeforeRouterInjectMiddleware
+  > = [];
 
   get express() {
     return this._express;

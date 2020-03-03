@@ -12,6 +12,13 @@ class App extends ExpressApp {
     (req: any, res: any, next: any) => {
       console.log("in before router middleware");
       return next();
+    },
+    {
+      active: () => process.env.NODE_ENV === "DEVELOPMENT",
+      middleware: (req: any, res: any, next: any) => {
+        console.log("---- development -----");
+        return next();
+      }
     }
   ];
 
