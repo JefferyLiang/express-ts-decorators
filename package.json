@@ -1,6 +1,6 @@
 {
   "name": "express-ts-decorator",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Express typescript descorators",
   "main": "build/index.js",
   "author": "JefferyLiang",
