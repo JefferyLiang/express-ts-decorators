@@ -42,12 +42,28 @@ export class Hello {
 import * as express from "express";
 import { ControllerLoader, ExpressApp } from "express-ts-descroator";
 import * as Path from "path";
+import * as cors from "cors";
 
 @ControllerLoader({
   filePath: Path.join(__dirname, "./controllers") // path to your controllers file
   autoInjectRoutes: true // auto inject router config to express when App constructor
 })
 class App extends ExpressApp {
+
+  // if use auto inject routes
+  // some middlewares can set in this array which you want it run before router
+  beforeRouterInjectMiddlewares = [
+    (req: any, res: any, next: any) => {
+      console.log("in before router middleware");
+      return next();
+    },
+    bodyParser.json(),
+    {
+      active: () => process.env.NODE_ENV === "DEVELOPMENT", // if some middleware just run in production or development you can use this
+      middleware: cors()
+    }
+  ];
+
   constructor() {
     super(express());
   }

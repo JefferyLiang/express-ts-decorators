@@ -34,11 +34,21 @@ function ControllerLoader(option) {
                     let controllers = ControllerLoaderService.getControllersWithFilePath(option.filePath);
                     this.routes = ControllerLoaderService.getRoutes(controllers);
                     if (option.autoInjectRoutes) {
+                        let app = null;
+                        let beforeRouterMiddlewares = [];
                         for (let key in this) {
-                            if (key === "_express" && this[key]) {
-                                let item = this[key];
-                                ControllerLoaderService.injectRouter(item, this.routes);
+                            if (key === "_express") {
+                                app = this[key];
                             }
+                            if (key === "beforeRouterInjectMiddlewares") {
+                                beforeRouterMiddlewares = this[key];
+                            }
+                        }
+                        if (beforeRouterMiddlewares) {
+                            ControllerLoaderService.injectMiddlewaresBeforeRouterInject(app, beforeRouterMiddlewares);
+                        }
+                        if (app) {
+                            ControllerLoaderService.injectRouter(app, this.routes);
                         }
                     }
                 }
@@ -112,9 +122,27 @@ class ControllerLoaderService {
         return routes;
     }
     static injectRouter(express, routes) {
-        this.log("[Express-ts-decorator] Begin to auto inject controller router");
+        this.log("Begin to auto inject controller router");
         for (let router of routes) {
             express.use(router);
+        }
+    }
+    static injectMiddlewaresBeforeRouterInject(express, middlewares) {
+        this.log("Inject before router middlewares");
+        for (let item of middlewares) {
+            if (item instanceof Function) {
+                express.use(item);
+            }
+            else if (item instanceof Object) {
+                let KEYS = Object.keys(item);
+                if (KEYS.find(val => val === "active") &&
+                    KEYS.find(val => val === "middleware")) {
+                    let isActive = item.active instanceof Function ? item.active() : item.active;
+                    if (isActive) {
+                        express.use(item.middleware);
+                    }
+                }
+            }
         }
     }
 }
@@ -125,6 +153,7 @@ ControllerLoaderService.MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
 class ExpressApp {
     constructor(app) {
         this.routes = [];
+        this.beforeRouterInjectMiddlewares = [];
         this._express = app;
     }
     get express() {

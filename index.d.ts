@@ -13,10 +13,18 @@ type ValidatorOption = {
   params?: Joi.Schema;
 };
 
+type BeforeRouterInjectMiddleware = {
+  active: Boolean | Function;
+  middleware: RequestHandler;
+};
+
 declare namespace expressTsDecorator {
   export class ExpressApp {
     _express: Express;
     routes: Router[];
+    beforeRouterInjectMiddlewares: Array<
+      RequestHandler | BeforeRouterInjectMiddleware
+    >;
     constructor(app: Express);
     get express(): Express;
     use(...args: Array<RequestHandler | ErrorRequestHandler>): void;

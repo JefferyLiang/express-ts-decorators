@@ -8,6 +8,20 @@ import * as Path from "path";
   autoInjectRoutes: true
 })
 class App extends ExpressApp {
+  beforeRouterInjectMiddlewares = [
+    (req: any, res: any, next: any) => {
+      console.log("in before router middleware");
+      return next();
+    },
+    {
+      active: () => process.env.NODE_ENV === "DEVELOPMENT",
+      middleware: (req: any, res: any, next: any) => {
+        console.log("---- development -----");
+        return next();
+      }
+    }
+  ];
+
   constructor(app: express.Express) {
     super(app);
   }
