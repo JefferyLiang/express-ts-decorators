@@ -112,7 +112,7 @@ class ControllerLoaderService {
         return routes;
     }
     static injectRouter(express, routes) {
-        this.log("[Express-ts-decorator] Begin to auto inject controller router");
+        this.log("Begin to auto inject controller router");
         for (let router of routes) {
             express.use(router);
         }
