@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { RouterService } from "./RouterService";
-import { Router, RequestHandler } from "express";
+import { Router, RequestHandler, Express, ErrorRequestHandler } from "express";
 import * as fs from "fs";
 
 // 控制器装饰器
@@ -38,11 +38,14 @@ type ControllerLoaderOption = {
   debug?: boolean;
   filePath: string;
   validator?: boolean;
+  autoInjectRoutes?: boolean;
 };
 
 // 服务器注入装饰器
 export function ControllerLoader(option: ControllerLoaderOption) {
-  return function<T extends { new (...args: any[]): {} }>(constr: T) {
+  return function<ExpressApp extends { new (...args: any[]): {} }>(
+    constr: ExpressApp
+  ) {
     return class extends constr {
       public routes: Router[];
 
@@ -63,6 +66,16 @@ export function ControllerLoader(option: ControllerLoaderOption) {
           );
           // 获取每个控制器对应的路由
           this.routes = ControllerLoaderService.getRoutes(controllers);
+
+          // 自动注入到路由之中
+          if (option.autoInjectRoutes) {
+            for (let key in this) {
+              if (key === "_express" && this[key]) {
+                let item: any = this[key];
+                ControllerLoaderService.injectRouter(item, this.routes);
+              }
+            }
+          }
         }
       }
     };
@@ -167,5 +180,30 @@ export class ControllerLoaderService {
     }
     // 返回路由配置
     return routes;
+  }
+
+  public static injectRouter(express: Express, routes: Router[]) {
+    this.log("[Express-ts-decorator] Begin to auto inject controller router");
+    for (let router of routes) {
+      express.use(router);
+    }
+  }
+}
+
+// 控制器注入描述类
+export class ExpressApp {
+  private _express: Express;
+  public routes: Router[] = [];
+
+  get express() {
+    return this._express;
+  }
+
+  constructor(app: Express) {
+    this._express = app;
+  }
+
+  public use(...args: Array<RequestHandler | ErrorRequestHandler>) {
+    this._express.use(...args);
   }
 }

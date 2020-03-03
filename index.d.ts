@@ -1,9 +1,11 @@
 import Joi = require("@hapi/joi");
 import { RequestHandler } from "express";
+import { ExpressApp } from "./build/Controller";
 
 type ControllerLoaderOption = {
   filePath: string;
   debug?: boolean;
+  autoInjectRoutes?: boolean;
 };
 
 type ValidatorOption = {
@@ -13,6 +15,7 @@ type ValidatorOption = {
 };
 
 declare namespace expressTsDecorator {
+  export class ExpressApp {}
   export function Controller(path: string): ClassDecorator;
   export function ControllerLoader(option: ControllerLoaderOption);
   export function Get(path: string): MethodDecorator;

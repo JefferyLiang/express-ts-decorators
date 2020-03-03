@@ -33,6 +33,14 @@ function ControllerLoader(option) {
                     }
                     let controllers = ControllerLoaderService.getControllersWithFilePath(option.filePath);
                     this.routes = ControllerLoaderService.getRoutes(controllers);
+                    if (option.autoInjectRoutes) {
+                        for (let key in this) {
+                            if (key === "_express" && this[key]) {
+                                let item = this[key];
+                                ControllerLoaderService.injectRouter(item, this.routes);
+                            }
+                        }
+                    }
                 }
             }
         };
@@ -103,9 +111,28 @@ class ControllerLoaderService {
         }
         return routes;
     }
+    static injectRouter(express, routes) {
+        this.log("[Express-ts-decorator] Begin to auto inject controller router");
+        for (let router of routes) {
+            express.use(router);
+        }
+    }
 }
 exports.ControllerLoaderService = ControllerLoaderService;
 ControllerLoaderService.debug = false;
 ControllerLoaderService.CTRL_METHOD_LIST = ["GET", "PUT", "POST", "DELETE"];
 ControllerLoaderService.MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
+class ExpressApp {
+    constructor(app) {
+        this.routes = [];
+        this._express = app;
+    }
+    get express() {
+        return this._express;
+    }
+    use(...args) {
+        this._express.use(...args);
+    }
+}
+exports.ExpressApp = ExpressApp;
 //# sourceMappingURL=Controller.js.map
