@@ -47,6 +47,8 @@ class RouterService {
                                 case _.isObject(result):
                                     res.json(result);
                                     break;
+                                case _.isBoolean(result):
+                                    res.end(String(result));
                                 default:
                                     res.end(result);
                             }
