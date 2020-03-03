@@ -1,6 +1,5 @@
 import Joi = require("@hapi/joi");
 import { RequestHandler, Express, Router, ErrorRequestHandler } from "express";
-import { ExpressApp } from "./build/Controller";
 
 type ControllerLoaderOption = {
   filePath: string;
@@ -14,7 +13,7 @@ type ValidatorOption = {
   params?: Joi.Schema;
 };
 
-interface ExpressAppItf {
+declare class ExpressAppItf {
   _express: Express;
   routes: Router[];
   constructor(app: Express);
@@ -23,7 +22,7 @@ interface ExpressAppItf {
 }
 
 declare namespace expressTsDecorator {
-  export class ExpressApp implements ExpressAppItf {}
+  export class ExpressAppItf {}
   export function Controller(path: string): ClassDecorator;
   export function ControllerLoader(option: ControllerLoaderOption);
   export function Get(path: string): MethodDecorator;

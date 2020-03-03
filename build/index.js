@@ -10,4 +10,5 @@ exports.Put = Ctrl.Put;
 exports.Post = Ctrl.Post;
 exports.Delete = Ctrl.Delete;
 exports.Validator = Vali.Validator;
+exports.ExpressApp = Ctrl.ExpressApp;
 //# sourceMappingURL=index.js.map
