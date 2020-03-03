@@ -1,6 +1,12 @@
 import "reflect-metadata";
 import { RouterService } from "./RouterService";
-import { Router, RequestHandler, Express, ErrorRequestHandler } from "express";
+import {
+  Router,
+  RequestHandler,
+  Express,
+  ErrorRequestHandler,
+  Request
+} from "express";
 import * as fs from "fs";
 
 // 控制器装饰器
@@ -69,11 +75,24 @@ export function ControllerLoader(option: ControllerLoaderOption) {
 
           // 自动注入到路由之中
           if (option.autoInjectRoutes) {
+            let app: any = null;
+            let beforeRouterMiddlewares: any = [];
             for (let key in this) {
-              if (key === "_express" && this[key]) {
-                let item: any = this[key];
-                ControllerLoaderService.injectRouter(item, this.routes);
+              if (key === "_express") {
+                app = this[key];
               }
+              if (key === "beforeRouterInjectMiddlewares") {
+                beforeRouterMiddlewares = this[key];
+              }
+            }
+            if (beforeRouterMiddlewares) {
+              ControllerLoaderService.injectMiddlewaresBeforeRouterInject(
+                app,
+                beforeRouterMiddlewares
+              );
+            }
+            if (app) {
+              ControllerLoaderService.injectRouter(app, this.routes);
             }
           }
         }
@@ -188,12 +207,23 @@ export class ControllerLoaderService {
       express.use(router);
     }
   }
+
+  public static injectMiddlewaresBeforeRouterInject(
+    express: Express,
+    middlewares: Array<RequestHandler>
+  ) {
+    this.log("Inject before router middlewares");
+    for (let item of middlewares) {
+      express.use(item);
+    }
+  }
 }
 
 // 控制器注入描述类
 export class ExpressApp {
   private _express: Express;
   public routes: Router[] = [];
+  public beforeRouterInjectMiddlewares: Array<RequestHandler> = [];
 
   get express() {
     return this._express;

@@ -48,6 +48,17 @@ import * as Path from "path";
   autoInjectRoutes: true // auto inject router config to express when App constructor
 })
 class App extends ExpressApp {
+
+  // if use auto inject routes
+  // some middlewares can set in this array which you want it run before router
+  beforeRouterInjectMiddlewares = [
+    (req: any, res: any, next: any) => {
+      console.log("in before router middleware");
+      return next();
+    },
+    bodyParser.json()
+  ];
+
   constructor() {
     super(express());
   }

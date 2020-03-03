@@ -34,11 +34,21 @@ function ControllerLoader(option) {
                     let controllers = ControllerLoaderService.getControllersWithFilePath(option.filePath);
                     this.routes = ControllerLoaderService.getRoutes(controllers);
                     if (option.autoInjectRoutes) {
+                        let app = null;
+                        let beforeRouterMiddlewares = [];
                         for (let key in this) {
-                            if (key === "_express" && this[key]) {
-                                let item = this[key];
-                                ControllerLoaderService.injectRouter(item, this.routes);
+                            if (key === "_express") {
+                                app = this[key];
                             }
+                            if (key === "beforeRouterInjectMiddlewares") {
+                                beforeRouterMiddlewares = this[key];
+                            }
+                        }
+                        if (beforeRouterMiddlewares) {
+                            ControllerLoaderService.injectMiddlewaresBeforeRouterInject(app, beforeRouterMiddlewares);
+                        }
+                        if (app) {
+                            ControllerLoaderService.injectRouter(app, this.routes);
                         }
                     }
                 }
@@ -117,6 +127,12 @@ class ControllerLoaderService {
             express.use(router);
         }
     }
+    static injectMiddlewaresBeforeRouterInject(express, middlewares) {
+        this.log("Inject before router middlewares");
+        for (let item of middlewares) {
+            express.use(item);
+        }
+    }
 }
 exports.ControllerLoaderService = ControllerLoaderService;
 ControllerLoaderService.debug = false;
@@ -125,6 +141,7 @@ ControllerLoaderService.MIDDLEWARES_KEY = Symbol("MIDDLEWARES_KEY");
 class ExpressApp {
     constructor(app) {
         this.routes = [];
+        this.beforeRouterInjectMiddlewares = [];
         this._express = app;
     }
     get express() {

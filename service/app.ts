@@ -8,6 +8,13 @@ import * as Path from "path";
   autoInjectRoutes: true
 })
 class App extends ExpressApp {
+  beforeRouterInjectMiddlewares = [
+    (req: any, res: any, next: any) => {
+      console.log("in before router middleware");
+      return next();
+    }
+  ];
+
   constructor(app: express.Express) {
     super(app);
   }

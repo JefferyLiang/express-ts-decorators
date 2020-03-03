@@ -17,6 +17,7 @@ declare namespace expressTsDecorator {
   export class ExpressApp {
     _express: Express;
     routes: Router[];
+    beforeRouterInjectMiddlewares: Array<RequestHandler>;
     constructor(app: Express);
     get express(): Express;
     use(...args: Array<RequestHandler | ErrorRequestHandler>): void;
