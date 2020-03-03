@@ -40,28 +40,16 @@ export class Hello {
 ```typescript
 // app.ts
 import * as express from "express";
-import { ControllerLoader } from "express-ts-descroator";
+import { ControllerLoader, ExpressApp } from "express-ts-descroator";
 import * as Path from "path";
 
 @ControllerLoader({
   filePath: Path.join(__dirname, "./controllers") // path to your controllers file
+  autoInjectRoutes: true // auto inject router config to express when App constructor
 })
-class App {
-  private _express: express.Express;
-  public routes: express.Router[] = [];
-
-  get express() {
-    return this._express;
-  }
-
+class App extends ExpressApp {
   constructor() {
-    this._express = express();
-  }
-
-  public use(
-    ...args: Array<express.RequestHandler | express.ErrorRequestHandler>
-  ) {
-    this._express.use(...args);
+    super(express());
   }
 }
 
@@ -71,12 +59,16 @@ const app = new App();
 // app.use(bodyParser.json());
 
 // inject the loader routes config
+// if you set the `autoInjectRoutes` is false in ControllerLoader,
+// you can inject router by yourself like that
 app.routes.forEach(router => {
   app.use(router);
 });
 
 // catch the error like that
-// app.use((err: IError, req: express.Request, res: express.Response, next: express.NextFunction) => { // do sth here });
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  // do sth here
+});
 
 app.express.listen(3000);
 ```
