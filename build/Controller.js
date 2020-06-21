@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ExpressApp = exports.ControllerLoaderService = exports.ControllerLoader = exports.Put = exports.Delete = exports.Post = exports.Get = exports.Middlewares = exports.Controller = void 0;
 require("reflect-metadata");
 const RouterService_1 = require("./RouterService");
 const express_1 = require("express");
@@ -81,14 +82,14 @@ class ControllerLoaderService {
         }
         return contorllerList;
     }
-    static routerBuilder(config) {
+    static routerBuilder(config, controller) {
         this.log("Buildding router ...");
         let router = express_1.Router();
         config
             .filter(val => val !== undefined)
             .forEach(val => {
             const path = val.prefix + val.route;
-            router[val.method.toLocaleLowerCase()](path, val.fn);
+            router[val.method.toLocaleLowerCase()](path, val.fn.bind(controller));
         });
         return router;
     }
@@ -116,7 +117,7 @@ class ControllerLoaderService {
                 };
             });
             if (routesConfig.length > 0) {
-                routes.push(this.routerBuilder(routesConfig));
+                routes.push(this.routerBuilder(routesConfig, controller));
             }
         }
         return routes;

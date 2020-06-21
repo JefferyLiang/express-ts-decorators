@@ -1,12 +1,6 @@
 import "reflect-metadata";
 import { RouterService } from "./RouterService";
-import {
-  Router,
-  RequestHandler,
-  Express,
-  ErrorRequestHandler,
-  Request
-} from "express";
+import { Router, RequestHandler, Express, ErrorRequestHandler } from "express";
 import * as fs from "fs";
 
 // 控制器装饰器
@@ -49,7 +43,7 @@ type ControllerLoaderOption = {
 
 // 服务器注入装饰器
 export function ControllerLoader(option: ControllerLoaderOption) {
-  return function<ExpressApp extends { new (...args: any[]): {} }>(
+  return function <ExpressApp extends { new (...args: any[]): {} }>(
     constr: ExpressApp
   ) {
     return class extends constr {
@@ -139,7 +133,8 @@ export class ControllerLoaderService {
   }
 
   private static routerBuilder(
-    config: Array<RouterConfigOption | undefined>
+    config: Array<RouterConfigOption | undefined>,
+    controller?: any
   ): Router {
     this.log("Buildding router ...");
     let router: any = Router();
@@ -147,7 +142,7 @@ export class ControllerLoaderService {
       .filter(val => val !== undefined)
       .forEach(val => {
         const path = val!.prefix + val!.route;
-        router[val!.method.toLocaleLowerCase()](path, val!.fn);
+        router[val!.method.toLocaleLowerCase()](path, val!.fn.bind(controller));
       });
     return router;
   }
@@ -194,7 +189,7 @@ export class ControllerLoaderService {
       );
 
       if (routesConfig.length > 0) {
-        routes.push(this.routerBuilder(routesConfig));
+        routes.push(this.routerBuilder(routesConfig, controller));
       }
     }
     // 返回路由配置

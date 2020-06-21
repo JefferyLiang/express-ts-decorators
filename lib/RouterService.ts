@@ -17,7 +17,7 @@ export class RouterService {
       return (target, key, descriptor: PropertyDescriptor) => {
         let original = descriptor.value;
         // 重新Hook服务函数
-        descriptor.value = async function(...args: any[]) {
+        descriptor.value = async function (...args: any[]) {
           let req: Request = args[0];
           let res: Response = args[1];
           let next: NextFunction = args[2];
@@ -77,6 +77,7 @@ export class RouterService {
         // 挂载元数据
         Reflect.defineMetadata(this.PATH_METADAT, path, descriptor.value);
         Reflect.defineMetadata(this.METHOD_METADATA, method, descriptor.value);
+        // return descriptor;
       };
     };
   }
